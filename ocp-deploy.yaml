@@ -34,6 +34,7 @@ spec:
         deploymentconfig: python-hello-world
     spec:
       containers:
+      - image: ''
         imagePullPolicy: Always
         name: python-hello-world
         ports:
