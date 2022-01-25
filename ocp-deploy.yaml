@@ -1,0 +1,60 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: python-hello-world
+    app.kubernetes.io/component: python-hello-world
+    app.kubernetes.io/instance: python-hello-world
+    app.kubernetes.io/name: python-hello-world
+    app.kubernetes.io/part-of: python-sample
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: 3.8-ubi7
+  name: python-hello-world
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: python-hello-world
+    deploymentconfig: python-hello-world
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: python-hello-world
+        deploymentconfig: python-hello-world
+    spec:
+      containers:
+        imagePullPolicy: Always
+        name: python-hello-world
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - python-hello-world
+      from:
+        kind: ImageStreamTag
+        name: python-hello-world:latest
+    type: ImageChange
+  - type: ConfigChange
